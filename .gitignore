@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+client/node_modules/
+
+# Environment variables
+# .env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build output
+client/dist/
+client/build/
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# Dependency lock files (optional, keep one if you want)
+yarn.lock
+pnpm-lock.yaml
+
+# Optional: ignore coverage/testing reports
+coverage/
