@@ -1,18 +1,56 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useAsyncError, useNavigate } from "react-router-dom";
+import { AppContent } from "../Context/AppContext";
+import axios from 'axios'
+import { toast } from "react-toastify";
 
 export default function Login(){
 
+  const {backendUrl, setIsLoggedin, getUserData} = useContext(AppContent);
+
   const navigate = useNavigate();
-  const [state, setState] = useState('Sign Up');
+  const [state, setState] = useState('Login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const onSubmitHandler = async(e) =>{
+    try {
+      e.preventDefault();
+
+      axios.defaults.withCredentials = true; // sends cookies with api requests
+
+      if(state === 'Sign Up'){
+        const {data} = await axios.post(backendUrl + '/api/auth/register', {name, email, password});
+
+        if(data.success){
+          setIsLoggedin(true);
+          getUserData();
+          navigate('/')
+        }
+        else toast.error(data.message);
+      }
+      else{
+        const {data} = await axios.post(backendUrl + '/api/auth/login', {email, password});
+
+        if(data.success){
+          setIsLoggedin(true);
+          getUserData();
+          navigate('/')
+        }
+        else toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(data.message);
+    }
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 to-purple-400">
       {/* <h1>Login Page</h1> */}
-      {/* <img src="/public/logo.jpeg" alt="" className="absolute left-5 top-5 sm:left-20 w-28 sm:w-32 cursor-pointer"/> */}
+      <img src="/public/logo.jpeg" alt="" 
+      onClick={() => {navigate('/')}}
+      className="absolute left-5 top-5 sm:left-20 w-18 sm:w-25 cursor-pointer"/>
 
       <div className="border bg-slate-900 p-10 rounded-lg shadow-lg w-full sm:w-96 text-indigo-300 text-sm">
         <h2 className="text-3xl text-center text-white font-semibold mb-4">
@@ -21,7 +59,7 @@ export default function Login(){
         <p className="text-sm text-center mb-6">
           {state === 'Sign Up' ? 'Create your account' : 'Login to your account!'}</p>
 
-        <form>
+        <form onSubmit={onSubmitHandler}>
 
           {state === 'Sign Up' && (
             <div className="flex gap-3 border items-center w-full mb-4 px-5 py-3 rounded-full bg-[#333A5C]">
